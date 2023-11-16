@@ -1,7 +1,11 @@
+## IMPORT ##
+############
 
+# Wind : 1 .. 3
+#   1 - LOW
+#   2 - MEDIUM
+#   3 - HIGH
 
-# Team : 1 .. T
-# Turbine : 1 .. 20
 # Progress : 1 .. 5
 #   0 - Plannification - Day 1
 #   1 - Plannification - Day 2
@@ -37,6 +41,8 @@ class Planning :
         self.missions = []
     def add_mission(self, team, turbine) :
         self.missions.append(Mission(team, turbine))
+    def get_mission(self) :
+        return self.missions
     def make_progress(self, wind) :
         i = 0
         update = []
@@ -48,21 +54,10 @@ class Planning :
             else :
                 i += 1
         return update
+    def get_unavailable_turbines(self) :
+        return [m.get_turbine() for m in self.missions]
     def display(self) :
         c = ""
         for i, el in enumerate(self.missions) :
             c += "%d - Team %2d is working on Turbine %2d \tProgress : %d / 5\n"%(i,self.missions[i].get_team(),self.missions[i].get_turbine(),self.missions[i].get_progress())
         return c
-    
-########## TEST ##########
-
-planning = Planning()
-planning.add_mission(5, 15)
-planning.make_progress(2)
-planning.add_mission(2, 6)
-planning.make_progress(2)
-planning.make_progress(3)
-planning.make_progress(1)
-planning.add_mission(1, 5)
-planning.make_progress(3)
-print(planning.display())
