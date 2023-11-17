@@ -1,12 +1,14 @@
 ## IMPORT ##
 import time
 import random
+import clear_cache 
+
 from planning import *
 from turbine import *
 from team import *
 ############
 
-def evelyne_dheliat(wind) :
+def weather_forecast(wind) :
     r = random.random()
     match wind :
         case 1 :
@@ -34,14 +36,18 @@ def evelyne_dheliat(wind) :
 def maintenance_strategy(turbines, teams) :
     new_missions = []
     available_teams = []
+    available_turbines = []
     for t in teams :
         if t.get_availability() :
             available_teams.append(t)
     for t in turbines :
-        if t.get_state() == 4 :
-            if len(available_teams) > 0 :
+        if t.get_availability() :
+            available_turbines.append(t)
+    for t in available_turbines :
+        if len(available_teams) > 0 :
+            if t.get_state() == 4 :
                 new_missions.append((t.get_id(), available_teams.pop().get_id()))
-        if len(available_teams) == 0 :
+        else :
             break
     return new_missions
 
@@ -59,17 +65,20 @@ class System :
         self.days_count += 1
 
         # update wind
-        self.wind = evelyne_dheliat(self.wind)
+        self.wind = weather_forecast(self.wind)
         self.wind_memory.append(self.wind)
 
         # add new maintenance mission
         missions_to_launch = maintenance_strategy(self.turbines, self.teams)
         for m in missions_to_launch :
-            self.planning.add_mission(m[0], m[1])
+            self.planning.new_mission(m[0], m[1])
             for t in self.teams :
                 if t.get_id() == m[1] :
                     t.new_mission()
                     self.total_cost += 50000
+            for t in self.turbines :
+                if t.get_id() == m[0] :
+                    t.new_mission()
 
         # update all maintenance mission
         update_info = self.planning.make_progress(self.wind)
@@ -79,16 +88,14 @@ class System :
         for t in self.turbines :
             if t.get_id() in turbines_repared :
                 t.repare()
+                t.end_mission()
         for t in self.teams :
             if t.get_id() in teams_availabled :
                 t.end_mission()
 
-        # unavailable turbines
-        unavailable_turbines = self.planning.get_unavailable_turbines()
-
         # turbine production
         for t in self.turbines :
-            if not(t.get_id() in unavailable_turbines) :
+            if t.get_availability() :
                 self.total_prod += t.produce(self.wind)
 
         # turbine damage
@@ -98,29 +105,38 @@ class System :
     def display(self) :
         print("System Current Information")
         print("Day %d"%(self.days_count))
-        print("Turbine")
+        print("==Turbine===")
         for t in self.turbines :
             t.display()
-        print("Teams")
+        print("==Teams=====")
         for t in self.teams :
             t.display()
-        print("Planning")
+        print("==Planning==")
         self.planning.display()
-        print("Total")
+        print("==Total=====")
         print("Prod : %d"%(self.total_prod))
         print("Cost : %d"%(self.total_cost))
+        print("="*30)
 
 ## TEST ##
 
 NUMBER_OF_TURBINES = 20
-NUMBER_OF_TEAMS = 5
+NUMBER_OF_TEAMS = 10
 NUMBER_OF_DAYS = 100
+
+DISPLAY = False
+DISPLAY_EVERY_X_DAYS = 20
+DELAY_BETWEEN_DISPLAY = 1
 
 system = System(NUMBER_OF_TURBINES, NUMBER_OF_TEAMS) 
 for k in range(NUMBER_OF_DAYS) :
     system.next_day()
-    if k%10 == 9 :
-        system.display()
-        time.sleep(5)
+    if DISPLAY :
+        if k%DISPLAY_EVERY_X_DAYS == DISPLAY_EVERY_X_DAYS-1 :
+            system.display()
+            time.sleep(DELAY_BETWEEN_DISPLAY)
+if not(DISPLAY) :
+    system.display()
+clear_cache.clear()
 
 ##########

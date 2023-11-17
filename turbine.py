@@ -64,15 +64,25 @@ def damage_calculator(wind, state) :
                     return 4
     return state
 
+MAINTENANCE = 0
+PRODUCTION = 1
+
 class Turbine :
     def __init__(self, id) :
         self.id = id
         self.state = 1
+        self.availability = PRODUCTION
         self.operating_days_count = 0
     def get_id(self) :
         return self.id
     def get_state(self) :
         return self.state
+    def get_availability(self) :
+        return self.availability
+    def new_mission(self) :
+        self.availability = MAINTENANCE
+    def end_mission(self) :
+        self.availability = PRODUCTION
     def repare(self) :
         self.state = 1
     def produce(self, wind) :
