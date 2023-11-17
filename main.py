@@ -44,13 +44,13 @@ class System :
         self.total_prod = 0
         self.total_cost = N_teams * 100000
         self.wind_memory = []
+    def get_day(self) :
+        return self.days_count
     def next_day(self) :
         self.days_count += 1
-
         # update wind
         self.wind = weather_forecast(self.wind)
         self.wind_memory.append(self.wind)
-
         # add new maintenance mission
         missions_to_launch = basic_strategy(self.turbines, self.teams, self.planning)
         for m in missions_to_launch :
@@ -62,12 +62,10 @@ class System :
             for t in self.turbines :
                 if t.get_id() == m[0] :
                     t.new_mission()
-
         # update all maintenance mission
         update_info = self.planning.make_progress(self.wind)
         turbines_repared = [u['turbine'] for u in update_info]
         teams_availabled = [u['team'] for u in update_info]
-
         for t in self.turbines :
             if t.get_id() in turbines_repared :
                 t.repare()
@@ -75,16 +73,13 @@ class System :
         for t in self.teams :
             if t.get_id() in teams_availabled :
                 t.end_mission()
-
         # turbine production
         for t in self.turbines :
             if t.get_availability() :
                 self.total_prod += t.produce(self.wind)
-
         # turbine damage
         for t in self.turbines :
             t.damage(self.wind)
-
     def display(self) :
         print("System Current Information")
         print("Day %d"%(self.days_count))
@@ -100,26 +95,20 @@ class System :
         print("Prod : %d"%(self.total_prod))
         print("Cost : %d"%(self.total_cost))
         print("="*30)
-
-if __name__ == "__main__" :
-
-    NUMBER_OF_TURBINES = 20
-    NUMBER_OF_TEAMS = 10
-    NUMBER_OF_DAYS = 100
-
-    DISPLAY = False
-    DISPLAY_EVERY_X_DAYS = 20
-    DELAY_BETWEEN_DISPLAY = 1
-
-    system = System(NUMBER_OF_TURBINES, NUMBER_OF_TEAMS) 
-    for k in range(NUMBER_OF_DAYS) :
-        system.next_day()
-        if DISPLAY :
-            if k%DISPLAY_EVERY_X_DAYS == DISPLAY_EVERY_X_DAYS-1 :
-                system.display()
-                time.sleep(DELAY_BETWEEN_DISPLAY)
-    if not(DISPLAY) :
-        system.display()
-    clear_cache.clear()
-
-##########
+    def display_txt(self) :
+        c = "System Current Information"+"\n"
+        c += "Day %d"%(self.days_count)+"\n"
+        c += "==Turbine==="+"\n"
+        for t in self.turbines :
+            c += t.display_txt()+"\n"
+        c += "==Teams====="+"\n"
+        for t in self.teams :
+            c += t.display_txt()+"\n"
+        c += "==Planning=="+"\n"
+        c += self.planning.display_txt()+"\n"
+        c += "==Total====="+"\n"
+        c += "Prod : %d"%(self.total_prod)+"\n"
+        c += "Cost : %d"%(self.total_cost)+"\n"
+        c += "="*30+"\n"
+        return c
+clear_cache.clear()

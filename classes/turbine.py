@@ -101,3 +101,5 @@ class Turbine :
         self.state = damage_calculator(wind, self.state)
     def display(self) :
         print("Turbine %d (state %d) - Production : %d"%(self.id,self.state,self.operating_days_count))
+    def display_txt(self) :
+        return "Turbine %d (state %d) - Production : %d"%(self.id,self.state,self.operating_days_count)

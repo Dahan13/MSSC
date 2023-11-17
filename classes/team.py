@@ -18,3 +18,5 @@ class Team :
         self.availability = WAITING
     def display(self) :
         print("Team %d is currently %s"%(self.id, "WORKING" if self.availability == WORKING else "WAITING"))
+    def display_txt(self) :
+        return "Team %d is currently %s"%(self.id, "WORKING" if self.availability == WORKING else "WAITING")

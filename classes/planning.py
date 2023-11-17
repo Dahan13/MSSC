@@ -53,3 +53,8 @@ class Planning :
     def display(self) :
         for i, el in enumerate(self.missions) :
             print("%d - Team %2d is working on Turbine %2d \tProgress : %d / 5"%(i,self.missions[i].get_team(),self.missions[i].get_turbine(),self.missions[i].get_progress()))
+    def display_txt(self) :
+        c = ""
+        for i, el in enumerate(self.missions) :
+            c += "%d - Team %2d is working on Turbine %2d \tProgress : %d / 5\n"%(i,self.missions[i].get_team(),self.missions[i].get_turbine(),self.missions[i].get_progress())
+        return c
