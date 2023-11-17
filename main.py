@@ -3,6 +3,7 @@ import time
 import random
 import clear_cache 
 
+from strategies import *
 from planning import *
 from turbine import *
 from team import *
@@ -33,24 +34,6 @@ def weather_forecast(wind) :
             else :
                 return 3
 
-def maintenance_strategy(turbines, teams) :
-    new_missions = []
-    available_teams = []
-    available_turbines = []
-    for t in teams :
-        if t.get_availability() :
-            available_teams.append(t)
-    for t in turbines :
-        if t.get_availability() :
-            available_turbines.append(t)
-    for t in available_turbines :
-        if len(available_teams) > 0 :
-            if t.get_state() == 4 :
-                new_missions.append((t.get_id(), available_teams.pop().get_id()))
-        else :
-            break
-    return new_missions
-
 class System :
     def __init__(self, N_turbines, N_teams) :
         self.turbines = [Turbine(i) for i in range(1, N_turbines+1)]
@@ -69,7 +52,7 @@ class System :
         self.wind_memory.append(self.wind)
 
         # add new maintenance mission
-        missions_to_launch = maintenance_strategy(self.turbines, self.teams)
+        missions_to_launch = basic_strategy(self.turbines, self.teams, self.planning)
         for m in missions_to_launch :
             self.planning.new_mission(m[0], m[1])
             for t in self.teams :
@@ -118,25 +101,25 @@ class System :
         print("Cost : %d"%(self.total_cost))
         print("="*30)
 
-## TEST ##
+if __name__ == "__main__" :
 
-NUMBER_OF_TURBINES = 20
-NUMBER_OF_TEAMS = 10
-NUMBER_OF_DAYS = 100
+    NUMBER_OF_TURBINES = 20
+    NUMBER_OF_TEAMS = 10
+    NUMBER_OF_DAYS = 100
 
-DISPLAY = False
-DISPLAY_EVERY_X_DAYS = 20
-DELAY_BETWEEN_DISPLAY = 1
+    DISPLAY = False
+    DISPLAY_EVERY_X_DAYS = 20
+    DELAY_BETWEEN_DISPLAY = 1
 
-system = System(NUMBER_OF_TURBINES, NUMBER_OF_TEAMS) 
-for k in range(NUMBER_OF_DAYS) :
-    system.next_day()
-    if DISPLAY :
-        if k%DISPLAY_EVERY_X_DAYS == DISPLAY_EVERY_X_DAYS-1 :
-            system.display()
-            time.sleep(DELAY_BETWEEN_DISPLAY)
-if not(DISPLAY) :
-    system.display()
-clear_cache.clear()
+    system = System(NUMBER_OF_TURBINES, NUMBER_OF_TEAMS) 
+    for k in range(NUMBER_OF_DAYS) :
+        system.next_day()
+        if DISPLAY :
+            if k%DISPLAY_EVERY_X_DAYS == DISPLAY_EVERY_X_DAYS-1 :
+                system.display()
+                time.sleep(DELAY_BETWEEN_DISPLAY)
+    if not(DISPLAY) :
+        system.display()
+    clear_cache.clear()
 
 ##########
