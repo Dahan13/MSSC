@@ -4,9 +4,9 @@ import random
 import clear_cache 
 
 from strategies import *
-from planning import *
-from turbine import *
-from team import *
+from classes.planning import *
+from classes.turbine import *
+from classes.team import *
 ############
 
 def weather_forecast(wind) :
