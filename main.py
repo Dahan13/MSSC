@@ -111,4 +111,6 @@ class System :
         c += "Cost : %d"%(self.total_cost)+"\n"
         c += "="*30+"\n"
         return c
+    def get_turbines(self) :
+        return self.turbines
 clear_cache.clear()

@@ -1,8 +1,10 @@
 ## IMPORT ##
 import clear_cache 
+from pathlib import Path
 
 from main import *
 from shiny import App, reactive, render, ui
+from shiny.types import ImgData
 ############
 
 CSS_flexbox = "display:flex;justify-content:center;align-items:center;"
@@ -11,9 +13,12 @@ CSS_border = "border:solid 2px black;"
 NUMBER_OF_TURBINES = 20
 NUMBER_OF_TEAMS = 5
 system = System(NUMBER_OF_TURBINES, NUMBER_OF_TEAMS)
+WIDTH = 5
+HEIGHT = 6
+
+PATH = "C:/Users/dubou/Desktop/IMTA/A3-LOGIN/UE-MSSC/MSSC/turbine_img/"
 
 app_ui = ui.page_fluid(
-    ui.h1("MSSC"),
     ui.layout_sidebar(
         ui.sidebar({"style":"display:flex;height:90vh;border:solid;"},
             ui.div({"style":CSS_flexbox+CSS_border},
@@ -49,7 +54,14 @@ app_ui = ui.page_fluid(
             ),
             width="300px"
         ),
-        ui.output_text_verbatim("main")
+        ui.navset_tab(
+            ui.nav("TEXT DISPLAY",
+                ui.output_text_verbatim("text")
+            ),
+            ui.nav("ICON DISPLAY",
+                ui.output_ui("icon")
+            ),
+        )
     )
 )
 
@@ -58,6 +70,7 @@ def server(input, output, session) :
     @reactive.Effect
     @reactive.event(input.reset)
     def reset() :
+        global system
         system = System(NUMBER_OF_TURBINES, NUMBER_OF_TEAMS)
 
     @reactive.Effect
@@ -110,10 +123,39 @@ def server(input, output, session) :
     @output
     @render.text
     @reactive.event(input.next_day)
-    def main() :
+    def text() :
         global system
         return system.display_txt()
 
+    @output
+    @render.ui
+    @reactive.event(input.next_day)
+    def icon() :
+        global system
+        turbines = system.get_turbines()
+        all = []
+        for j in range(HEIGHT) :
+            line = []
+            for i in range(WIDTH) :
+                index = j*WIDTH+i
+                if index < len(turbines) :
+                    img = "turbine_on.png"
+                    if turbines[index].get_state() != 4 : img = "turbine_on.png"
+                    else : img = "turbine_off.png"
+                    line.append (
+                                    ui.div({"style":"display:flex;width:180px;height:130px;border:solid;"},
+                                        ui.div({"style":"height:100%;width:50%;"},
+                                            ui.img({"style":"height:90%;margin-top:10%;"},src=img)
+                                        ),
+                                        ui.div({"style":"height:100%;width:50%;"},
+                                            ui.div({"style":"display:flex;height:50%;width:100%;"},ui.p({"style":"margin:auto;font-weight:bold;font-size:20px;"},str(index+1))),
+                                            ui.div({"style":"display:flex;height:50%;width:100%;"},ui.div({"style":"display:flex;margin:auto;height:70%;width:35%;border:solid 2px blue;"},ui.p({"style":"margin:auto;font-weight:normal;font-size:20px;"},str(turbines[index].get_state()))))
+                                        )
+                                    )
+                                )
+            all.append(ui.div({"style":"display:flex;margin-bottom:30px;justify-content:space-between;"},line))
+        return ui.div({"style":"display:block;"},all)
 
-app = App(app_ui, server, debug = False)
+img_dir = Path(__file__).parent / "turbine_img"
+app = App(app_ui, server, static_assets=img_dir, debug = False)
 clear_cache.clear()
