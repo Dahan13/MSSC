@@ -72,7 +72,7 @@ def server(input, output, session) :
     @reactive.event(input.next_day)
     def next_day() :
         global system
-        system.next_day(basic_strategy)
+        system.next_day(strategy_B)
 
     @output
     @render.ui
@@ -95,7 +95,7 @@ def server(input, output, session) :
                             ),
                             ui.div({"style":f"display:flex;width:250px;height:150px;border:solid blue 4px;"},
                                 ui.div({"style":"display:flex;height:100%;width:100%;"},
-                                    ui.p({"style":"max-width:100%;max-height:100%;margin:auto;font-weight:bold;font-size:50px;"},f"DAY {system.get_days_count()}")
+                                    ui.p({"style":"max-width:100%;max-height:100%;margin:auto;font-weight:bold;font-size:40px;"},f"DAY {system.get_days_count()}")
                                 )
                             ),
                             ui.div({"style":f"display:flex;width:250px;height:150px;border:solid blue 4px;"},
