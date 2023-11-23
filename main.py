@@ -42,11 +42,11 @@ class System :
         self.total_prod = 0
         self.total_cost = N_teams * 100000
         self.wind_memory = []
-    def next_day(self) :
+    def next_day(self, strategy) :
         self.days_count += 1
         self.wind = weather_forecast(self.wind)
         self.wind_memory.append(self.wind)
-        missions_to_launch = basic_strategy(self.turbines, self.teams, self.planning)
+        missions_to_launch = strategy(self.turbines, self.teams, self.planning)
         for m in missions_to_launch :
             self.planning.new_mission(m[0], m[1])
             for t in self.teams :
@@ -118,3 +118,44 @@ class System :
         return self.total_cost 
     def get_wind_memory(self) :
         return self.wind_memory
+    def next_day_q_learning_A(self) :
+        self.days_count += 1
+        self.wind = weather_forecast(self.wind)
+        self.wind_memory.append(self.wind)
+    def next_day_q_learning_B(self, n_missions) :
+        if n_missions > 0 :
+            missions_to_launch = []
+            state_in_study = 4
+            while n_missions > 0 :
+                for turbine in self.turbines :
+                    if n_missions > 0 and turbine.get_availability() and turbine.get_state() == state_in_study :
+                        for team in self.teams :
+                            if team.get_availability() :
+                                missions_to_launch.append((turbine.get_id(), team.get_id))
+                                n_missions -= 1
+                                break
+                state_in_study -= 1
+            for m in missions_to_launch :
+                self.planning.new_mission(m[0], m[1])
+                for t in self.teams :
+                    if t.get_id() == m[1] :
+                        t.new_mission()
+                        self.total_cost += 50000
+                for t in self.turbines :
+                    if t.get_id() == m[0] :
+                        t.new_mission()
+        update_info = self.planning.make_progress(self.wind)
+        turbines_repared = [u['turbine'] for u in update_info]
+        teams_availabled = [u['team'] for u in update_info]
+        for t in self.turbines :
+            if t.get_id() in turbines_repared :
+                t.repare()
+                t.end_mission()
+        for t in self.teams :
+            if t.get_id() in teams_availabled :
+                t.end_mission()
+        for t in self.turbines :
+            if t.get_availability() :
+                self.total_prod += t.produce(self.wind)
+        for t in self.turbines :
+            t.damage(self.wind)

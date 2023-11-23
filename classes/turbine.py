@@ -79,6 +79,8 @@ class Turbine :
         return self.state
     def get_availability(self) :
         return self.availability
+    def get_operating_days_count(self) :
+        return self.operating_days_count
     def new_mission(self) :
         self.availability = MAINTENANCE
     def end_mission(self) :
@@ -99,7 +101,3 @@ class Turbine :
         return 0
     def damage(self, wind) :
         self.state = damage_calculator(wind, self.state)
-    def display(self) :
-        print("Turbine %d (state %d) - Production : %d"%(self.id,self.state,self.operating_days_count))
-    def display_txt(self) :
-        return "Turbine %d (state %d) - Production : %d"%(self.id,self.state,self.operating_days_count)

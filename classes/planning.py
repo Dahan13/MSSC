@@ -18,6 +18,14 @@ class Mission :
         self.turbine = turbine
         self.team = team
         self.progress = 0
+    def get_team(self) :
+        return self.team
+    def get_turbine(self) :
+        return self.turbine
+    def get_progress(self) :
+        return self.progress
+    def get_info(self) :
+        return {"team":self.team,"turbine":self.turbine,"progress":self.progress}
     def make_progress(self, wind) :
         if self.progress < 2 : 
             self.progress += 1
@@ -25,18 +33,15 @@ class Mission :
             if wind < 3 :
                 self.progress += 1
         return self.progress
-    def get_info(self) :
-        return {"team":self.team,"turbine":self.turbine,"progress":self.progress}
-    def get_team(self) :
-        return self.team
-    def get_turbine(self) :
-        return self.turbine
-    def get_progress(self) :
-        return self.progress
 
 class Planning :
     def __init__(self) :
         self.missions = []
+    def get_missions(self) :
+        return self.missions
+    def get_attribution(self) :
+        for mission in self.missions :
+            yield (mission.get_team(), mission.get_turbine())
     def new_mission(self, turbine, team) :
         self.missions.append(Mission(turbine, team))
     def make_progress(self, wind) :
@@ -50,14 +55,3 @@ class Planning :
             else :
                 i += 1
         return update
-    def display(self) :
-        for i, el in enumerate(self.missions) :
-            print("%d - Team %2d is working on Turbine %2d \tProgress : %d / 5"%(i,self.missions[i].get_team(),self.missions[i].get_turbine(),self.missions[i].get_progress()))
-    def display_txt(self) :
-        c = ""
-        for i, el in enumerate(self.missions) :
-            c += "%d - Team %2d is working on Turbine %2d \tProgress : %d / 5\n"%(i,self.missions[i].get_team(),self.missions[i].get_turbine(),self.missions[i].get_progress())
-        return c
-    def get_attribution(self) :
-        for mission in self.missions :
-            yield (mission.get_team(), mission.get_turbine())

@@ -35,35 +35,15 @@ app_ui = ui.page_fluid(
                     ui.div({"style":"width:70px;"},ui.input_numeric("nb_teams",label="",value=NUMBER_OF_TEAMS,min=1,max=100,step=1))
                 )
             ),
-            ui.div({"style":CSS_flexbox+CSS_border},
-                ui.div({"style":CSS_flexbox+"font-size:15px;padding-top:15px;"},ui.output_text_verbatim("day_indicator")),
-                ui.div({"style":CSS_flexbox},ui.input_action_button("next_day","NEXT DAY"))
-            ),
-            ui.div({"style":CSS_border+"height:375px;overflow:scroll;"},
-                ui.div({"style":CSS_flexbox+"height:10%;"},
-                    ui.div({"style":CSS_flexbox+"width:50%;border-right:solid 1px;padding-top:10px;"},ui.p("TURBINES")),
-                    ui.div({"style":CSS_flexbox+"width:50%;border-left:solid 1px;padding-top:10px;"},ui.p("TEAMS"))
-                ),
-                ui.div({"style":"display:flex;justify-items:center;height:90%;"},
-                    ui.div({"style":"width:50%;padding:0 10px;border-right:solid 1px;"},ui.output_text_verbatim("turbines_status")),
-                    ui.div({"style":"width:50%;padding:0 10px;border-left:solid 1px;"},ui.output_text_verbatim("teams_status"))
-                )
-            ),
-            ui.div({"style":CSS_border+"padding-top:15px;"},
-                ui.output_text_verbatim("total_cost"),
-                ui.output_text_verbatim("total_prod")
-            ),
+            ui.div({"style":CSS_flexbox+CSS_border},ui.input_action_button("next_day","NEXT DAY")),
             width="300px"
         ),
         ui.navset_tab(
-            ui.nav("TEXT DISPLAY",
-                ui.output_text_verbatim("text")
-            ),
             ui.nav("ICON DISPLAY",
                 ui.output_ui("ICON_current_day_info"),
                 ui.output_ui("ICON_turbines"),
                 ui.output_ui("ICON_teams")
-            ),
+            )
         )
     )
 )
@@ -92,43 +72,7 @@ def server(input, output, session) :
     @reactive.event(input.next_day)
     def next_day() :
         global system
-        system.next_day()
-
-    @output
-    @render.text
-    @reactive.event(input.next_day)
-    def day_indicator() :
-        global system
-        return "DAY n°%d"%(system.get_days_count())
-    
-    output
-    @render.text
-    @reactive.event(input.nb_turbines)
-    def turbines_status() :
-        return "T0 - (0)\n"*NUMBER_OF_TURBINES
-    
-    output
-    @render.text
-    @reactive.event(input.nb_teams)
-    def teams_status() :
-        return "T0 - (0)\n"*NUMBER_OF_TEAMS
-
-    output
-    @render.text
-    def total_cost() :
-        return "TOTAL COST : %8d"%(0)
-    
-    output
-    @render.text
-    def total_prod() :
-        return "TOTAL PROD : %8d"%(0)
-    
-    @output
-    @render.text
-    @reactive.event(input.next_day)
-    def text() :
-        global system
-        return system.display_txt()
+        system.next_day(basic_strategy)
 
     @output
     @render.ui
