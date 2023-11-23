@@ -34,8 +34,7 @@ def strategy_A(system) :
             State   1   2   3   4   M
 Production
 0% - 70%            N   N   Y   Y   N
-70% - 80%           N   N   N   Y   N
-80% - 90%           N   N   N   Y   N
+70% - 90%           N   N   N   Y   N
 90% - 100%          N   N   N   N   N
 """
 def condition_B(system, turbine) :
