@@ -58,3 +58,6 @@ class Planning :
         for i, el in enumerate(self.missions) :
             c += "%d - Team %2d is working on Turbine %2d \tProgress : %d / 5\n"%(i,self.missions[i].get_team(),self.missions[i].get_turbine(),self.missions[i].get_progress())
         return c
+    def get_attribution(self) :
+        for mission in self.missions :
+            yield (mission.get_team(), mission.get_turbine())

@@ -1,3 +1,6 @@
 # MSSC
 
-# Executer le fichier "app.bat" avec le terminal windows puis se rendre sur "http://localhost:5000"
+# Ouvrir le terminal windows
+# Se placer dans le dossier MSSC
+# Executer le fichier "app.bat"
+# L'application est disponible à l'URL : "http://localhost:5000"

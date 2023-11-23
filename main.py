@@ -1,7 +1,5 @@
 ## IMPORT ##
-import time
 import random
-import clear_cache 
 
 from strategies import *
 from classes.planning import *
@@ -44,14 +42,10 @@ class System :
         self.total_prod = 0
         self.total_cost = N_teams * 100000
         self.wind_memory = []
-    def get_day(self) :
-        return self.days_count
     def next_day(self) :
         self.days_count += 1
-        # update wind
         self.wind = weather_forecast(self.wind)
         self.wind_memory.append(self.wind)
-        # add new maintenance mission
         missions_to_launch = basic_strategy(self.turbines, self.teams, self.planning)
         for m in missions_to_launch :
             self.planning.new_mission(m[0], m[1])
@@ -62,7 +56,6 @@ class System :
             for t in self.turbines :
                 if t.get_id() == m[0] :
                     t.new_mission()
-        # update all maintenance mission
         update_info = self.planning.make_progress(self.wind)
         turbines_repared = [u['turbine'] for u in update_info]
         teams_availabled = [u['team'] for u in update_info]
@@ -73,11 +66,9 @@ class System :
         for t in self.teams :
             if t.get_id() in teams_availabled :
                 t.end_mission()
-        # turbine production
         for t in self.turbines :
             if t.get_availability() :
                 self.total_prod += t.produce(self.wind)
-        # turbine damage
         for t in self.turbines :
             t.damage(self.wind)
     def display(self) :
@@ -105,7 +96,7 @@ class System :
         for t in self.teams :
             c += t.display_txt()+"\n"
         c += "==Planning=="+"\n"
-        c += self.planning.display_txt()+"\n"
+        c += self.planning.display_txt()
         c += "==Total====="+"\n"
         c += "Prod : %d"%(self.total_prod)+"\n"
         c += "Cost : %d"%(self.total_cost)+"\n"
@@ -113,4 +104,17 @@ class System :
         return c
     def get_turbines(self) :
         return self.turbines
-clear_cache.clear()
+    def get_teams(self) :
+        return self.teams
+    def get_planning(self) :
+        return self.planning
+    def get_wind(self) :
+        return self.wind
+    def get_days_count(self) :
+        return self.days_count
+    def get_total_prod(self) :
+        return self.total_prod
+    def get_total_cost(self) :
+        return self.total_cost 
+    def get_wind_memory(self) :
+        return self.wind_memory
