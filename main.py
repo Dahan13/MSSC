@@ -41,11 +41,9 @@ class System :
         self.days_count = 0
         self.total_prod = 0
         self.total_cost = N_teams * 100000
-        self.wind_memory = []
     def next_day(self, strategy) :
         self.days_count += 1
         self.wind = weather_forecast(self.wind)
-        self.wind_memory.append(self.wind)
         missions_to_launch = strategy(self)
         for m in missions_to_launch :
             self.planning.new_mission(m[0], m[1])
