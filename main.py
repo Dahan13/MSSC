@@ -61,7 +61,7 @@ class System :
         teams_availabled = [u['team'] for u in update_info]
         for t in self.turbines :
             if t.get_id() in turbines_repared :
-                t.repare()
+                t.repair()
                 t.end_mission()
         for t in self.teams :
             if t.get_id() in teams_availabled :
