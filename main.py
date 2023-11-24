@@ -43,6 +43,8 @@ class System :
         self.total_cost = N_teams * 100000
     def next_day(self, strategy) :
         self.days_count += 1
+        if self.days_count % 365 == 0 :
+            self.total_cost += N_teams * 100000
         self.wind = weather_forecast(self.wind)
         missions_to_launch = strategy(self)
         for m in missions_to_launch :
