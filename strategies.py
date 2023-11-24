@@ -1,11 +1,7 @@
 ## IMPORT ##
 ############
 
-
-from main import System
-
-
-def strategy_application(system: System, condition: function):
+def strategy_application(system, condition):
     """Returns a list of new missions for a given system depending on the chosen conditions."""
     new_missions = []
 
