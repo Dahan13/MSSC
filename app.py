@@ -29,7 +29,7 @@ CSS_maxbox = "max-width:90%;max-height:90%;margin:auto;"
 CSS_completionbox = "display:flex;margin-bottom:20px;justify-content:space-between;"
 CSS_t_text = "margin:auto;font-weight:bold;font-size:20px;"
 
-strategy = {"A":strategy_A,"B":strategy_B}
+strategy = {"A":strategy_A,"B":strategy_B, "C": strategy_C, "D": strategy_D}
 
 app_ui = ui.page_fluid(
     ui.h1("MSSC"),
@@ -52,7 +52,7 @@ app_ui = ui.page_fluid(
             ui.div({"style":CSS_flexbox},ui.input_action_button("next_month","NEXT MONTH", width="200px")),
             ui.div({"style":CSS_flexbox},ui.input_action_button("next_year","NEXT YEAR", width="200px")),
             ui.div({"style":CSS_flexbox},ui.input_action_button("go_to_next_year","GO TO NEXT YEAR", width="200px")),
-            ui.div({"style":CSS_flexbox},ui.input_select("strategy_select","STRATEGY",{"A":"STRATEGY A","B":"STRATEGY B"}, width="200px")),
+            ui.div({"style":CSS_flexbox},ui.input_select("strategy_select","STRATEGY",{"A":"STRATEGY A","B":"STRATEGY B","C":"STRATEGY C","D":"STRATEGY D"}, width="200px")),
             width="300px"
         ),
         ui.navset_tab(
