@@ -29,13 +29,14 @@ CSS_maxbox = "max-width:90%;max-height:90%;margin:auto;"
 CSS_completionbox = "display:flex;margin-bottom:20px;justify-content:space-between;"
 CSS_t_text = "margin:auto;font-weight:bold;font-size:20px;"
 
+strategy = strategy_B
 
 app_ui = ui.page_fluid(
     ui.h1("MSSC"),
     ui.layout_sidebar(
         ui.sidebar({"style":"display:flex;height:90vh;border:solid;"},
-            ui.div({"style":CSS_flexbox+CSS_border},
-                ui.input_action_button("reset","RESET SYSTEM")
+            ui.div({"style":CSS_flexbox},
+                ui.input_action_button("reset","RESET SYSTEM", width="200px")
             ),
             ui.div({"style":CSS_border+"padding-top:15px;"},
                 ui.div({"style":CSS_flexbox},
@@ -47,7 +48,10 @@ app_ui = ui.page_fluid(
                     ui.div({"style":"width:70px;"},ui.input_numeric("nb_teams",label="",value=NUMBER_OF_TEAMS,min=1,max=100,step=1))
                 )
             ),
-            ui.div({"style":CSS_flexbox+CSS_border},ui.input_action_button("next_day","NEXT DAY")),
+            ui.div({"style":CSS_flexbox},ui.input_action_button("next_day","NEXT DAY", width="200px")),
+            ui.div({"style":CSS_flexbox},ui.input_action_button("next_month","NEXT MONTH", width="200px")),
+            ui.div({"style":CSS_flexbox},ui.input_action_button("next_year","NEXT YEAR", width="200px")),
+            ui.div({"style":CSS_flexbox},ui.input_action_button("go_to_next_year","GO TO NEXT YEAR", width="200px")),
             width="300px"
         ),
         ui.navset_tab(
@@ -84,11 +88,32 @@ def server(input, output, session) :
     @reactive.event(input.next_day)
     def next_day() :
         global system
-        system.next_day(strategy_B)
+        system.next_day(strategy)
 
+    @reactive.Effect
+    @reactive.event(input.next_month)
+    def next_month() :
+        global system
+        for i in range(30) :
+            system.next_day(strategy)
+
+    @reactive.Effect
+    @reactive.event(input.next_year)
+    def next_year() :
+        global system
+        for i in range(365) :
+            system.next_day(strategy)
+
+    @reactive.Effect
+    @reactive.event(input.go_to_next_year)
+    def go_to_next_year() :
+        global system
+        while system.get_days_count() % 365 != 0 :
+            system.next_day(strategy)
+    
     @output
     @render.ui
-    @reactive.event(input.next_day, input.reset)
+    @reactive.event(input.next_day, input.next_month, input.next_year, input.go_to_next_year, input.reset)
     def ICON_current_day_info() :
         global system
         wind = system.get_wind()
@@ -125,7 +150,7 @@ def server(input, output, session) :
 
     @output
     @render.ui
-    @reactive.event(input.next_day, input.reset)
+    @reactive.event(input.next_day, input.next_month, input.next_year, input.go_to_next_year, input.reset)
     def ICON_turbines() :
         global system
         turbines = system.get_turbines()
@@ -154,7 +179,7 @@ def server(input, output, session) :
 
     @output
     @render.ui
-    @reactive.event(input.next_day, input.reset)
+    @reactive.event(input.next_day, input.next_month, input.next_year, input.go_to_next_year, input.reset)
     def ICON_teams() :
         global system
         teams = system.get_teams()
