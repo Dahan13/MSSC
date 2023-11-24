@@ -29,7 +29,7 @@ CSS_maxbox = "max-width:90%;max-height:90%;margin:auto;"
 CSS_completionbox = "display:flex;margin-bottom:20px;justify-content:space-between;"
 CSS_t_text = "margin:auto;font-weight:bold;font-size:20px;"
 
-strategy = strategy_B
+strategy = {"A":strategy_A,"B":strategy_B}
 
 app_ui = ui.page_fluid(
     ui.h1("MSSC"),
@@ -52,6 +52,7 @@ app_ui = ui.page_fluid(
             ui.div({"style":CSS_flexbox},ui.input_action_button("next_month","NEXT MONTH", width="200px")),
             ui.div({"style":CSS_flexbox},ui.input_action_button("next_year","NEXT YEAR", width="200px")),
             ui.div({"style":CSS_flexbox},ui.input_action_button("go_to_next_year","GO TO NEXT YEAR", width="200px")),
+            ui.div({"style":CSS_flexbox},ui.input_select("strategy_select","STRATEGY",{"A":"STRATEGY A","B":"STRATEGY B"}, width="200px")),
             width="300px"
         ),
         ui.navset_tab(
@@ -88,28 +89,28 @@ def server(input, output, session) :
     @reactive.event(input.next_day)
     def next_day() :
         global system
-        system.next_day(strategy)
+        system.next_day(strategy[input.strategy_select()])
 
     @reactive.Effect
     @reactive.event(input.next_month)
     def next_month() :
         global system
         for i in range(30) :
-            system.next_day(strategy)
+            system.next_day(strategy[input.strategy_select()])
 
     @reactive.Effect
     @reactive.event(input.next_year)
     def next_year() :
         global system
         for i in range(365) :
-            system.next_day(strategy)
+            system.next_day(strategy[input.strategy_select()])
 
     @reactive.Effect
     @reactive.event(input.go_to_next_year)
     def go_to_next_year() :
         global system
         while system.get_days_count() % 365 != 0 :
-            system.next_day(strategy)
+            system.next_day(strategy[input.strategy_select()])
     
     @output
     @render.ui
