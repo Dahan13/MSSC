@@ -12,7 +12,7 @@ NUMBER_OF_TEAMS = 5
 
 system = System(NUMBER_OF_TURBINES, NUMBER_OF_TEAMS)
 
-WIDTH = 6
+WIDTH = 8
 HEIGHT = 6
 
 CSS_flexbox = "display:flex;justify-content:center;align-items:center;"
@@ -88,7 +88,7 @@ def server(input, output, session) :
 
     @output
     @render.ui
-    @reactive.event(input.next_day)
+    @reactive.event(input.next_day, input.reset)
     def ICON_current_day_info() :
         global system
         wind = system.get_wind()
@@ -125,7 +125,7 @@ def server(input, output, session) :
 
     @output
     @render.ui
-    @reactive.event(input.next_day)
+    @reactive.event(input.next_day, input.reset)
     def ICON_turbines() :
         global system
         turbines = system.get_turbines()
@@ -154,7 +154,7 @@ def server(input, output, session) :
 
     @output
     @render.ui
-    @reactive.event(input.next_day)
+    @reactive.event(input.next_day, input.reset)
     def ICON_teams() :
         global system
         teams = system.get_teams()
