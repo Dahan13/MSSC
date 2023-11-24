@@ -1,18 +1,6 @@
 ## IMPORT ##
 ############
 
-# Wind : 1 .. 3
-#   1 - LOW
-#   2 - MEDIUM
-#   3 - HIGH
-
-# Progress : 1 .. 5
-#   0 - Plannification - Day 1
-#   1 - Plannification - Day 2
-#   2 - Maintenance - Day 3
-#   3 - Maintenance - Day 4
-#   4 - Maintenance - Day 5
-
 class Mission :
     def __init__(self, turbine, team) :
         self.turbine = turbine

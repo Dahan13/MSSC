@@ -2,17 +2,6 @@
 import random
 ############
 
-# Wind : 1 .. 3
-#   1 - LOW
-#   2 - MEDIUM
-#   3 - HIGH
-
-# State : 1 .. 4
-#   1 - No Defects
-#   2 - Small Defects
-#   3 - Important Defects
-#   4 - Non Functional
-
 def damage_calculator(wind, state) :
     r = random.random()
     match wind :

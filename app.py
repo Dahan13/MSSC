@@ -7,16 +7,28 @@ from shiny import App, reactive, render, ui
 from shiny.types import ImgData
 ############
 
-CSS_flexbox = "display:flex;justify-content:center;align-items:center;"
-CSS_border = "border:solid 2px black;"
-
 NUMBER_OF_TURBINES = 20
 NUMBER_OF_TEAMS = 5
+
 system = System(NUMBER_OF_TURBINES, NUMBER_OF_TEAMS)
+
 WIDTH = 6
 HEIGHT = 6
 
-PATH = "C:/Users/dubou/Desktop/IMTA/A3-LOGIN/UE-MSSC/MSSC/turbine_img/"
+CSS_flexbox = "display:flex;justify-content:center;align-items:center;"
+CSS_border = "border:solid 2px black;"
+CSS_infobox = "display:flex;width:250px;height:150px;"
+CSS_blue_border = "border:solid blue 2px;"
+CSS_black_border = "border:solid black 2px;"
+CSS_orange_border = "border:solid orange 2px;"
+CSS_linebox = f"display:flex;width:{1000//(WIDTH+1)}px;height:{600//(HEIGHT+1)}px;"
+CSS_flex_100_100 = "display:flex;height:100%;width:100%;"
+CSS_flex_50_100 = "display:flex;height:50%;width:100%;"
+CSS_flex_100_70 = "display:flex;height:100%;width:70%;"
+CSS_maxbox = "max-width:90%;max-height:90%;margin:auto;"
+CSS_completionbox = "display:flex;margin-bottom:20px;justify-content:space-between;"
+CSS_t_text = "margin:auto;font-weight:bold;font-size:20px;"
+
 
 app_ui = ui.page_fluid(
     ui.h1("MSSC"),
@@ -87,25 +99,25 @@ def server(input, output, session) :
                 wind_img = "wind_medium.gif"
             case 3 :
                 wind_img = "wind_high.gif"
-        information =   ui.div({"style":"display:flex;margin-bottom:30px;justify-content:space-between;"},
-                            ui.div({"style":f"display:flex;width:250px;height:150px;border:solid blue 4px;"},
-                                ui.div({"style":"display:flex;height:100%;width:100%;"},
-                                    ui.img({"style":"max-width:100%;max-height:100%;margin:auto;"},src=wind_img)
+        information =   ui.div({"style":CSS_completionbox},
+                            ui.div({"style":CSS_infobox+CSS_blue_border},
+                                ui.div({"style":CSS_flex_100_100},
+                                    ui.img({"style":CSS_maxbox},src=wind_img)
                                 )
                             ),
-                            ui.div({"style":f"display:flex;width:250px;height:150px;border:solid blue 4px;"},
-                                ui.div({"style":"display:flex;height:100%;width:100%;"},
-                                    ui.p({"style":"max-width:100%;max-height:100%;margin:auto;font-weight:bold;font-size:40px;"},f"DAY {system.get_days_count()}")
+                            ui.div({"style":CSS_infobox+CSS_blue_border},
+                                ui.div({"style":CSS_flex_100_100},
+                                    ui.p({"style":CSS_maxbox+"font-weight:bold;font-size:40px;"},f"DAY {system.get_days_count()}")
                                 )
                             ),
-                            ui.div({"style":f"display:flex;width:250px;height:150px;border:solid blue 4px;"},
-                                ui.div({"style":"display:flex;height:100%;width:100%;"},
-                                    ui.p({"style":"max-width:100%;max-height:100%;margin:auto;font-weight:bold;font-size:15px;"},f"PRODUCTION {system.get_total_prod()}")
+                            ui.div({"style":CSS_infobox+CSS_blue_border},
+                                ui.div({"style":CSS_flex_100_100},
+                                    ui.p({"style":CSS_maxbox+"font-weight:bold;font-size:15px;"},f"PRODUCTION {system.get_total_prod()}")
                                 )
                             ),
-                            ui.div({"style":f"display:flex;width:250px;height:150px;border:solid blue 4px;"},
-                                ui.div({"style":"display:flex;height:100%;width:100%;"},
-                                    ui.p({"style":"max-width:100%;max-height:100%;margin:auto;font-weight:bold;font-size:15px;"},f"COST {system.get_total_cost()}")
+                            ui.div({"style":CSS_infobox+CSS_blue_border},
+                                ui.div({"style":CSS_flex_100_100},
+                                    ui.p({"style":CSS_maxbox+"font-weight:bold;font-size:15px;"},f"COST {system.get_total_cost()}")
                                 )
                             )
                         )
@@ -126,21 +138,18 @@ def server(input, output, session) :
                     if turbines[index].get_state() != 4 : img = "turbine_on.png"
                     else : img = "turbine_off.png"
                     line.append (
-                                    ui.div({"style":f"display:flex;width:{1000//(WIDTH+1)}px;height:{600//(HEIGHT+1)}px;border:solid;"},
-                                        ui.div({"style":"display:flex;height:100%;width:70%;"},
-                                            ui.img({"style":"max-width:100%;max-height:100%;margin:auto;"},src=img)
-                                        ),
+                                    ui.div({"style":CSS_linebox+CSS_black_border},
+                                        ui.div({"style":CSS_flex_100_70},ui.img({"style":CSS_maxbox},src=img)),
                                         ui.div({"style":"height:100%;width:30%;"},
-                                            ui.div({"style":"display:flex;height:50%;width:100%;"},ui.p({"style":"margin:auto;font-weight:bold;font-size:20px;"},str(index+1))),
-                                            ui.div({"style":"display:flex;height:50%;width:100%;"},ui.div({"style":"display:flex;margin:auto;height:35px;width:35px;background-color:#55c9ff;border-radius:50%;"},ui.p({"style":"margin:auto;font-weight:bold;font-size:20px;"},str(turbines[index].get_state()))))
+                                            ui.div({"style":CSS_flex_50_100},ui.p({"style":CSS_t_text},str(index+1))),
+                                            ui.div({"style":CSS_flex_50_100},
+                                                ui.div({"style":"display:flex;margin:auto;height:35px;width:35px;background-color:#55c9ff;border-radius:50%;"},
+                                                    ui.p({"style":CSS_t_text},str(turbines[index].get_state()))))
                                         )
                                     )
                                 )
-                else :
-                    if len(turbines)> j*WIDTH and len(turbines)< (j+1)*WIDTH : 
-                        line.append(ui.div({"style":f"display:flex;width:{1000//(WIDTH+1)}px;height:{600//(HEIGHT+1)}px;"}))
-            if line != [] :
-                all.append(ui.div({"style":"display:flex;margin-bottom:20px;justify-content:space-between;"},line))
+                elif len(turbines)> j*WIDTH and len(turbines)< (j+1)*WIDTH : line.append(ui.div({"style":CSS_linebox}))
+            if line != [] : all.append(ui.div({"style":CSS_completionbox},line))
         return ui.div({"style":"display:block;"},all)
 
     @output
@@ -156,30 +165,24 @@ def server(input, output, session) :
             for i in range(WIDTH) :
                 index = j*WIDTH+i
                 if index < len(teams) :
-                    if teams[index].get_availability() : 
-                        img = "team_on.png"
-                        display_info = ""
+                    if teams[index].get_availability() : img, display_info = "team_on.png", ""
                     else : 
                         img = "team_off.png"
                         for (team, turbine) in planning.get_attribution() :
-                            if team == teams[index].get_id() :
-                                display_info = str(turbine)
+                            if team == teams[index].get_id() : display_info = str(turbine)
                     line.append (
-                                    ui.div({"style":f"display:flex;width:{1000//(WIDTH+1)}px;height:{600//(HEIGHT+1)}px;border:solid orange;"},
-                                        ui.div({"style":"display:flex;height:100%;width:70%;"},
-                                            ui.img({"style":"max-width:90%;max-height:90%;margin:auto;"},src=img)
-                                        ),
+                                    ui.div({"style":CSS_linebox+CSS_orange_border},
+                                        ui.div({"style":CSS_flex_100_70},ui.img({"style":CSS_maxbox},src=img)),
                                         ui.div({"style":"height:100%;width:30%;"},
-                                            ui.div({"style":"display:flex;height:50%;width:100%;"},ui.p({"style":"margin:auto;font-weight:bold;font-size:20px;"},str(index+1))),
-                                            ui.div({"style":"display:flex;height:50%;width:100%;"},ui.div({"style":"display:flex;margin:auto;height:35px;width:30px;border:solid 2px blue;"},ui.p({"style":"margin:auto;font-weight:normal;font-size:20px;"},display_info)))
+                                            ui.div({"style":CSS_flex_50_100},ui.p({"style":CSS_t_text},str(index+1))),
+                                            ui.div({"style":CSS_flex_50_100},
+                                                ui.div({"style":"display:flex;margin:auto;height:35px;width:30px;"+CSS_blue_border},
+                                                    ui.p({"style":CSS_t_text},display_info)))
                                         )
                                     )
                                 )
-                else :
-                    if len(teams) > j*WIDTH and len(teams) < (j+1)*WIDTH : 
-                        line.append(ui.div({"style":f"display:flex;width:{1000//(WIDTH+1)}px;height:{600//(HEIGHT+1)}px;"}))
-            if line != [] :
-                all.append(ui.div({"style":"display:flex;margin-bottom:30px;justify-content:space-between;"},line))
+                elif len(teams) > j*WIDTH and len(teams) < (j+1)*WIDTH : line.append(ui.div({"style":CSS_linebox}))
+            if line != [] : all.append(ui.div({"style":CSS_completionbox},line))
         return ui.div({"style":"display:block;"},all)
 
 
