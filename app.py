@@ -17,7 +17,7 @@ HEIGHT = 6
 
 CSS_flexbox = "display:flex;justify-content:center;align-items:center;"
 CSS_border = "border:solid 2px black;"
-CSS_infobox = "display:flex;width:250px;height:150px;"
+CSS_infobox = "display:flex;height:150px;"
 CSS_blue_border = "border:solid blue 2px;"
 CSS_black_border = "border:solid black 2px;"
 CSS_orange_border = "border:solid orange 2px;"
@@ -125,25 +125,22 @@ def server(input, output, session) :
                 wind_img = "wind_medium.gif"
             case 3 :
                 wind_img = "wind_high.gif"
-        information =   ui.div({"style":CSS_completionbox},
-                            ui.div({"style":CSS_infobox+CSS_blue_border},
+        information =   ui.div({"style":CSS_completionbox+"height:200px;"},
+                            ui.div({"style":CSS_infobox+"width:20%;height:100%;"+CSS_blue_border},
                                 ui.div({"style":CSS_flex_100_100},
                                     ui.img({"style":CSS_maxbox},src=wind_img)
                                 )
                             ),
-                            ui.div({"style":CSS_infobox+CSS_blue_border},
-                                ui.div({"style":CSS_flex_100_100},
-                                    ui.p({"style":CSS_maxbox+"font-weight:bold;font-size:40px;"},f"DAY {system.get_days_count()}")
-                                )
-                            ),
-                            ui.div({"style":CSS_infobox+CSS_blue_border},
-                                ui.div({"style":CSS_flex_100_100},
-                                    ui.p({"style":CSS_maxbox+"font-weight:bold;font-size:15px;"},f"PRODUCTION {system.get_total_prod()}")
-                                )
-                            ),
-                            ui.div({"style":CSS_infobox+CSS_blue_border},
-                                ui.div({"style":CSS_flex_100_100},
-                                    ui.p({"style":CSS_maxbox+"font-weight:bold;font-size:15px;"},f"COST {system.get_total_cost()}")
+                            ui.div({"style":"display:block;width:80%;height:100%;"},
+                                ui.div({"style":"display:flex;height:50%;"},
+                                    ui.div({"style":"display:flex;width:33%;"+CSS_blue_border},ui.p({"style":CSS_maxbox+"font-weight:bold;font-size:20px;"},"PROD %d"%(system.get_total_prod()))),
+                                    ui.div({"style":"display:flex;width:33%;"+CSS_blue_border},ui.p({"style":CSS_maxbox+"font-weight:bold;font-size:20px;"},"COST %d"%(system.get_total_cost()))),
+                                    ui.div({"style":"display:flex;width:33%;"+CSS_blue_border},ui.p({"style":CSS_maxbox+"font-weight:bold;font-size:20px;"},"COST/PROD %5.5f"%(system.get_total_cost()/system.get_total_prod() if system.get_total_prod() != 0 else 0)))
+                                ),
+                                ui.div({"style":"display:flex;height:50%;"},
+                                    ui.div({"style":"display:flex;width:33%;"+CSS_blue_border},ui.p({"style":CSS_maxbox+"font-weight:bold;font-size:20px;"},"TURBINE %d"%(system.get_turbine_occupation_percentage())+"%")),
+                                    ui.div({"style":"display:flex;width:33%;"+CSS_blue_border},ui.p({"style":CSS_maxbox+"font-weight:bold;font-size:20px;"},"TEAM %d"%(system.get_team_occupation_percentage())+"%")),
+                                    ui.div({"style":"display:flex;width:33%;"+CSS_blue_border},ui.p({"style":CSS_maxbox+"font-weight:bold;font-size:30px;"},"DAY %d"%(system.get_days_count())))
                                 )
                             )
                         )

@@ -50,6 +50,7 @@ class System:
         self.planning = Planning()
         self.wind = 1
         self.days_count = 0
+        self.wind_days_count = 0
         self.total_prod = 0
         self.total_cost = N_teams * 100000
 
@@ -63,6 +64,9 @@ class System:
 
         # We update the wind speed for the next day
         self.wind = weather_forecast(self.wind)
+
+        if self.wind > 1 :
+            self.wind_days_count += 1
 
         # We decide which missions to launch according to the strategy
         missions_to_launch = strategy(self)
@@ -107,6 +111,10 @@ class System:
         for t in self.turbines:
             t.damage(self.wind)
 
+        for t in self.teams:
+            if not(t.get_availability()) :
+                t.work()
+
     def get_turbines(self):
         """Returns the list of all turbines."""
         return self.turbines
@@ -134,3 +142,18 @@ class System:
     def get_total_cost(self):
         """Returns the total cost since the beginning of the simulation."""
         return self.total_cost
+
+    def get_team_occupation_percentage(self) :
+        l = [t.get_operating_days_count() for t in self.teams]
+        s = 0
+        for x in l :
+            s += x/self.wind_days_count if self.days_count != 0 else 0
+        return 100*s/len(self.teams) 
+    
+    def get_turbine_occupation_percentage(self) :
+        l = [t.get_operating_days_count() for t in self.turbines]
+        s = 0
+        for x in l :
+            s += x/self.wind_days_count if self.days_count != 0 else 0
+        return 100*s/len(self.turbines)
+    
