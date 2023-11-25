@@ -13,7 +13,7 @@ NUMBER_OF_TEAMS = 5
 system = System(NUMBER_OF_TURBINES, NUMBER_OF_TEAMS)
 
 color_dict = {1:"#37e171",2:"#a2ec5c",3:"#feab43",4:"#ff4444"}
-strategy = {"A":strategy_A,"B":strategy_B}
+strategy = {"A":strategy_A,"B":strategy_B, "C": strategy_C, "D": strategy_D}
 
 CSS_flex_center_center = "display:flex;justify-content:center;align-items:center;"
 CSS_stat_box = "width:33.33%;border:solid;"
@@ -50,7 +50,7 @@ app_ui = ui.page_fluid(
             ui.div({"style":CSS_flex_center_center},ui.input_action_button("next_month", "NEXT MONTH",   width="200px")),
             ui.div({"style":CSS_flex_center_center},ui.input_action_button("next_year",  "NEXT YEAR",    width="200px")),
             ui.div({"style":CSS_flex_center_center},ui.input_action_button("end_year",   "END YEAR",     width="200px")),
-            ui.div({"style":CSS_flex_center_center},ui.input_select("strategy_select","STRATEGY",{"A":"STRATEGY A","B":"STRATEGY B"}, width="200px")),
+            ui.div({"style":CSS_flex_center_center},ui.input_select("strategy_select","STRATEGY",{"A":"STRATEGY A","B":"STRATEGY B","C":"STRATEGY C","D":"STRATEGY D"}, width="200px")),
             width="250px"
         ),
         ui.navset_tab(

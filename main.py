@@ -123,6 +123,10 @@ class System:
     def get_teams(self):
         """Returns the list of all teams."""
         return self.teams
+    
+    def get_available_teams(self):
+        """Returns the list of all available teams."""
+        return [t for t in self.teams if t.get_availability()]
 
     def get_planning(self):
         """Returns the mission planning."""
@@ -161,4 +165,8 @@ class System:
         for x in l :
             s += x/self.wind_days_count if self.wind_days_count != 0 else 0
         return 100*s/len(self.turbines)
+    
+    def get_maintenance_crew_availability(self):
+        """Returns the availability of the maintenance crew."""
+        return len(self.get_available_teams())/len(self.teams)
     
