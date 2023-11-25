@@ -12,52 +12,50 @@ NUMBER_OF_TEAMS = 5
 
 system = System(NUMBER_OF_TURBINES, NUMBER_OF_TEAMS)
 
-WIDTH = 8
-HEIGHT = 6
-
-CSS_flexbox = "display:flex;justify-content:center;align-items:center;"
-CSS_border = "border:solid 2px black;"
-CSS_infobox = "display:flex;height:150px;"
-CSS_blue_border = "border:solid blue 2px;"
-CSS_black_border = "border:solid black 2px;"
-CSS_orange_border = "border:solid orange 2px;"
-CSS_linebox = f"display:flex;width:{1000//(WIDTH+1)}px;height:{600//(HEIGHT+1)}px;"
-CSS_flex_100_100 = "display:flex;height:100%;width:100%;"
-CSS_flex_50_100 = "display:flex;height:50%;width:100%;"
-CSS_flex_100_70 = "display:flex;height:100%;width:70%;"
-CSS_maxbox = "max-width:90%;max-height:90%;margin:auto;"
-CSS_completionbox = "display:flex;margin-bottom:20px;justify-content:space-between;"
-CSS_t_text = "margin:auto;font-weight:bold;font-size:20px;"
-
+color_dict = {1:"#37e171",2:"#a2ec5c",3:"#feab43",4:"#ff4444"}
 strategy = {"A":strategy_A,"B":strategy_B}
 
+CSS_flex_center_center = "display:flex;justify-content:center;align-items:center;"
+CSS_stat_box = "width:33.33%;border:solid;"
+CSS_stat_subbox = "display:flex;height:50%;"
+CSS_stat_info_large = "font-weight:bold;font-size:15px;margin:auto;"
+CSS_stat_info_small = "font-weight:bold;font-size:25px;margin:auto;"
+CSS_H200 = "height:200px;"
+CSS_W200 = "height:200px;"
+CSS_img = "max-width:90%;max-height:90%;margin:auto;"
+
+CSS_T_box = "display:flex;height:70px;width:120px;border:solid"
+CSS_T_left = "display:flex;height:70px;width:70px;"
+CSS_T_right = "height:70px;width:50px;"
+CSS_T_text = "margin:auto;font-size:10px;" 
+
+WIDTH = 5
+
 app_ui = ui.page_fluid(
-    ui.h1("MSSC"),
+    ui.p({"style":"font-size:5vh;margin:0;"},"MSSC"),
     ui.layout_sidebar(
-        ui.sidebar({"style":"display:flex;height:90vh;border:solid;"},
-            ui.div({"style":CSS_flexbox},
-                ui.input_action_button("reset","RESET SYSTEM", width="200px")
-            ),
-            ui.div({"style":CSS_border+"padding-top:15px;"},
-                ui.div({"style":CSS_flexbox},
+        ui.sidebar({"style":"height:90vh;"},
+            ui.div({"style":CSS_flex_center_center},ui.input_action_button("reset","RESET SYSTEM",width="200px")),
+            ui.div({"style":"border:solid 1px;border-radius:5px;padding-top:15px;"},
+                ui.div({"style":CSS_flex_center_center},
                     ui.p({"style":"width:100px;"},"TURBINES"),
-                    ui.div({"style":"width:70px;"},ui.input_numeric("nb_turbines",label="",value=NUMBER_OF_TURBINES,min=1,max=100,step=1))
+                    ui.div({"style":"width:75px;"},ui.input_numeric("nb_turbines",  label=None, value=NUMBER_OF_TURBINES,   min=1,max=100,step=1))
                 ),
-                ui.div({"style":CSS_flexbox},
+                ui.div({"style":CSS_flex_center_center},
                     ui.p({"style":"width:100px;"},"TEAMS"),
-                    ui.div({"style":"width:70px;"},ui.input_numeric("nb_teams",label="",value=NUMBER_OF_TEAMS,min=1,max=100,step=1))
+                    ui.div({"style":"width:75px;"},ui.input_numeric("nb_teams",     label=None, value=NUMBER_OF_TEAMS,      min=1,max=100,step=1))
                 )
             ),
-            ui.div({"style":CSS_flexbox},ui.input_action_button("next_day","NEXT DAY", width="200px")),
-            ui.div({"style":CSS_flexbox},ui.input_action_button("next_month","NEXT MONTH", width="200px")),
-            ui.div({"style":CSS_flexbox},ui.input_action_button("next_year","NEXT YEAR", width="200px")),
-            ui.div({"style":CSS_flexbox},ui.input_action_button("go_to_next_year","GO TO NEXT YEAR", width="200px")),
-            ui.div({"style":CSS_flexbox},ui.input_select("strategy_select","STRATEGY",{"A":"STRATEGY A","B":"STRATEGY B"}, width="200px")),
-            width="300px"
+            ui.div({"style":CSS_flex_center_center},ui.input_action_button("next_day",   "NEXT DAY",     width="200px")),
+            ui.div({"style":CSS_flex_center_center},ui.input_action_button("next_month", "NEXT MONTH",   width="200px")),
+            ui.div({"style":CSS_flex_center_center},ui.input_action_button("next_year",  "NEXT YEAR",    width="200px")),
+            ui.div({"style":CSS_flex_center_center},ui.input_action_button("end_year",   "END YEAR",     width="200px")),
+            ui.div({"style":CSS_flex_center_center},ui.input_select("strategy_select","STRATEGY",{"A":"STRATEGY A","B":"STRATEGY B"}, width="200px")),
+            width="250px"
         ),
         ui.navset_tab(
             ui.nav("ICON DISPLAY",
-                ui.output_ui("ICON_current_day_info"),
+                ui.output_ui("ICON_statistics"),
                 ui.output_ui("ICON_turbines"),
                 ui.output_ui("ICON_teams")
             )
@@ -106,16 +104,16 @@ def server(input, output, session) :
             system.next_day(strategy[input.strategy_select()])
 
     @reactive.Effect
-    @reactive.event(input.go_to_next_year)
-    def go_to_next_year() :
+    @reactive.event(input.end_year)
+    def end_year() :
         global system
         while system.get_days_count() % 365 != 0 :
             system.next_day(strategy[input.strategy_select()])
     
     @output
     @render.ui
-    @reactive.event(input.next_day, input.next_month, input.next_year, input.go_to_next_year, input.reset)
-    def ICON_current_day_info() :
+    @reactive.event(input.next_day, input.next_month, input.next_year, input.end_year, input.reset)
+    def ICON_statistics() :
         global system
         wind = system.get_wind()
         match wind :
@@ -125,88 +123,124 @@ def server(input, output, session) :
                 wind_img = "wind_medium.gif"
             case 3 :
                 wind_img = "wind_high.gif"
-        information =   ui.div({"style":CSS_completionbox+"height:200px;"},
-                            ui.div({"style":CSS_infobox+"width:20%;height:100%;"+CSS_blue_border},
-                                ui.div({"style":CSS_flex_100_100},
-                                    ui.img({"style":CSS_maxbox},src=wind_img)
-                                )
+        information =   ui.div({"style":CSS_flex_center_center+CSS_H200},
+                            ui.div({"style":CSS_flex_center_center+CSS_H200+CSS_W200+"border:solid;"},
+                                ui.img({"style":CSS_img},src=wind_img)
                             ),
-                            ui.div({"style":"display:block;width:80%;height:100%;"},
-                                ui.div({"style":"display:flex;height:50%;"},
-                                    ui.div({"style":"display:flex;width:33%;"+CSS_blue_border},ui.p({"style":CSS_maxbox+"font-weight:bold;font-size:20px;"},"PROD %d"%(system.get_total_prod()))),
-                                    ui.div({"style":"display:flex;width:33%;"+CSS_blue_border},ui.p({"style":CSS_maxbox+"font-weight:bold;font-size:20px;"},"COST %d"%(system.get_total_cost()))),
-                                    ui.div({"style":"display:flex;width:33%;"+CSS_blue_border},ui.p({"style":CSS_maxbox+"font-weight:bold;font-size:20px;"},"COST/PROD %5.5f"%(system.get_total_cost()/system.get_total_prod() if system.get_total_prod() != 0 else 0)))
+                            ui.div({"style":CSS_H200+"width:calc(100% - 200px);"},
+                                ui.div({"style":CSS_stat_subbox},
+                                    ui.div({"style":CSS_stat_box},
+                                        ui.div({"style":CSS_stat_subbox},ui.p({"style":CSS_stat_info_large}, "PROD")),
+                                        ui.div({"style":CSS_stat_subbox},ui.p({"style":CSS_stat_info_large}, "%d"%(system.get_total_prod()))),
+                                    ),
+                                    ui.div({"style":CSS_stat_box},
+                                        ui.div({"style":CSS_stat_subbox},ui.p({"style":CSS_stat_info_large}, "COST")),
+                                        ui.div({"style":CSS_stat_subbox},ui.p({"style":CSS_stat_info_large}, "%d"%(system.get_total_cost()))),
+                                    ),
+                                    ui.div({"style":CSS_stat_box},
+                                        ui.div({"style":CSS_stat_subbox},ui.p({"style":CSS_stat_info_large}, "COST/PROD")),
+                                        ui.div({"style":CSS_stat_subbox},ui.p({"style":CSS_stat_info_large}, "%d"%(system.get_total_cost()/system.get_total_prod() if system.get_total_prod() != 0 else 0)))
+                                    ),
                                 ),
-                                ui.div({"style":"display:flex;height:50%;"},
-                                    ui.div({"style":"display:flex;width:33%;"+CSS_blue_border},ui.p({"style":CSS_maxbox+"font-weight:bold;font-size:20px;"},"TURBINE %d"%(system.get_turbine_occupation_percentage())+"%")),
-                                    ui.div({"style":"display:flex;width:33%;"+CSS_blue_border},ui.p({"style":CSS_maxbox+"font-weight:bold;font-size:20px;"},"TEAM %d"%(system.get_team_occupation_percentage())+"%")),
-                                    ui.div({"style":"display:flex;width:33%;"+CSS_blue_border},ui.p({"style":CSS_maxbox+"font-weight:bold;font-size:30px;"},"DAY %d"%(system.get_days_count())))
+                                ui.div({"style":CSS_stat_subbox},
+                                    ui.div({"style":CSS_stat_box},
+                                        ui.div({"style":CSS_stat_subbox},ui.p({"style":CSS_stat_info_small}, "TURBINE")),
+                                        ui.div({"style":CSS_stat_subbox},ui.p({"style":CSS_stat_info_small}, "%d"%(system.get_turbine_occupation_percentage()) + "%"))
+                                    ),
+                                    ui.div({"style":CSS_stat_box},
+                                        ui.div({"style":CSS_stat_subbox},ui.p({"style":CSS_stat_info_small}, "TEAM")),
+                                        ui.div({"style":CSS_stat_subbox},ui.p({"style":CSS_stat_info_small}, "%d"%(system.get_team_occupation_percentage()) + "%"))
+                                    ),
+                                    ui.div({"style":CSS_stat_box},
+                                        ui.div({"style":CSS_stat_subbox},ui.p({"style":CSS_stat_info_small}, "DAY")),
+                                        ui.div({"style":CSS_stat_subbox},ui.p({"style":CSS_stat_info_small}, "%d"%(system.get_days_count())))
+                                    ),
                                 )
                             )
                         )
-        return ui.div({"style":"display:block;"}, information)
+        return ui.div({"style":"display:block;margin-bottom:10px;"}, information)
 
     @output
     @render.ui
-    @reactive.event(input.next_day, input.next_month, input.next_year, input.go_to_next_year, input.reset)
+    @reactive.event(input.next_day, input.next_month, input.next_year, input.end_year, input.reset)
     def ICON_turbines() :
         global system
         turbines = system.get_turbines()
-        all = []
-        for j in range(HEIGHT) :
-            line = []
-            for i in range(WIDTH) :
-                index = j*WIDTH+i
+        necessary_lines = (len(turbines) - 1) // WIDTH + 1
+        all_lines = []
+        for i in range(necessary_lines) :
+            current_line = []
+            for j in range(WIDTH) :
+                index = i*WIDTH + j
                 if index < len(turbines) :
-                    if turbines[index].get_state() != 4 : img = "turbine_on.png"
-                    else : img = "turbine_off.png"
-                    line.append (
-                                    ui.div({"style":CSS_linebox+CSS_black_border},
-                                        ui.div({"style":CSS_flex_100_70},ui.img({"style":CSS_maxbox},src=img)),
-                                        ui.div({"style":"height:100%;width:30%;"},
-                                            ui.div({"style":CSS_flex_50_100},ui.p({"style":CSS_t_text},str(index+1))),
-                                            ui.div({"style":CSS_flex_50_100},
-                                                ui.div({"style":"display:flex;margin:auto;height:35px;width:35px;background-color:#55c9ff;border-radius:50%;"},
-                                                    ui.p({"style":CSS_t_text},str(turbines[index].get_state()))))
-                                        )
-                                    )
+                    if turbines[index].get_state() != 4 :   img = "turbine_on.png"
+                    else :                                  img = "turbine_off.png"
+                    operating_time_percentage = 100*turbines[index].get_operating_days_count()/system.get_wind_days_count() if system.get_wind_days_count() != 0 else 0
+                    current_line.append (
+                        ui.div({"style":CSS_T_box},
+                            ui.div({"style":CSS_T_left},
+                                ui.img({"style":CSS_img},src=img)
+                            ),
+                            ui.div({"style":CSS_T_right},
+                                ui.div({"style":CSS_flex_center_center+"height:25%;"},
+                                    ui.p({"style":CSS_T_text+"font-weight:bold;"},"n° "+str(turbines[index].get_id()))
+                                ),
+                                ui.div({"style":CSS_flex_center_center+"height:25%;margin-bottom:5px;"},
+                                    ui.p({"style":CSS_T_text+"padding:2px;background-color:%s;border-radius:5px;"%(color_dict[turbines[index].get_state()])},"state "+str(turbines[index].get_state()))
+                                ),
+                                ui.div({"style":CSS_flex_center_center+"height:40%;"},
+                                    ui.p({"style":CSS_T_text},"%2.2f"%(operating_time_percentage)+" %")
                                 )
-                elif len(turbines)> j*WIDTH and len(turbines)< (j+1)*WIDTH : line.append(ui.div({"style":CSS_linebox}))
-            if line != [] : all.append(ui.div({"style":CSS_completionbox},line))
-        return ui.div({"style":"display:block;"},all)
+                            )
+                        )
+                    )
+                else : 
+                    current_line.append(ui.div({"style":CSS_T_box}))
+            all_lines.append(ui.div({"style":"display:flex;margin-bottom:10px;justify-content:space-between;"},current_line))
+        return ui.div({"style":"display:block;"},all_lines)
 
     @output
     @render.ui
-    @reactive.event(input.next_day, input.next_month, input.next_year, input.go_to_next_year, input.reset)
+    @reactive.event(input.next_day, input.next_month, input.next_year, input.end_year, input.reset)
     def ICON_teams() :
         global system
         teams = system.get_teams()
+        necessary_lines = (len(teams) - 1) // WIDTH + 1
         planning = system.get_planning()
-        all = []
-        for j in range(HEIGHT) :
-            line = []
-            for i in range(WIDTH) :
-                index = j*WIDTH+i
+        all_lines = []
+        for i in range(necessary_lines) :
+            current_line = []
+            for j in range(WIDTH) :
+                index = i*WIDTH + j
                 if index < len(teams) :
                     if teams[index].get_availability() : img, display_info = "team_on.png", ""
                     else : 
                         img = "team_off.png"
                         for (team, turbine) in planning.get_attribution() :
                             if team == teams[index].get_id() : display_info = str(turbine)
-                    line.append (
-                                    ui.div({"style":CSS_linebox+CSS_orange_border},
-                                        ui.div({"style":CSS_flex_100_70},ui.img({"style":CSS_maxbox},src=img)),
-                                        ui.div({"style":"height:100%;width:30%;"},
-                                            ui.div({"style":CSS_flex_50_100},ui.p({"style":CSS_t_text},str(index+1))),
-                                            ui.div({"style":CSS_flex_50_100},
-                                                ui.div({"style":"display:flex;margin:auto;height:35px;width:30px;"+CSS_blue_border},
-                                                    ui.p({"style":CSS_t_text},display_info)))
-                                        )
-                                    )
+                    operating_time_percentage = 100*teams[index].get_operating_days_count()/system.get_wind_days_count() if system.get_wind_days_count() != 0 else 0
+                    current_line.append (
+                        ui.div({"style":CSS_T_box},
+                            ui.div({"style":CSS_T_left},
+                                ui.img({"style":CSS_img},src=img)
+                            ),
+                            ui.div({"style":CSS_T_right},
+                                ui.div({"style":CSS_flex_center_center+"height:25%;"},
+                                    ui.p({"style":CSS_T_text+"font-weight:bold;"},"n° "+str(teams[index].get_id()))
+                                ),
+                                ui.div({"style":CSS_flex_center_center+"height:25%;margin-bottom:5px;"},
+                                    ui.p({"style":CSS_T_text+"padding:2px;border:solid;border-radius:5px;"},display_info)
+                                ),
+                                ui.div({"style":CSS_flex_center_center+"height:40%;"},
+                                    ui.p({"style":CSS_T_text},"%2.2f"%(operating_time_percentage)+" %")
                                 )
-                elif len(teams) > j*WIDTH and len(teams) < (j+1)*WIDTH : line.append(ui.div({"style":CSS_linebox}))
-            if line != [] : all.append(ui.div({"style":CSS_completionbox},line))
-        return ui.div({"style":"display:block;"},all)
+                            )
+                        )    
+                    )
+                else : 
+                    current_line.append(ui.div({"style":CSS_T_box}))
+            all_lines.append(ui.div({"style":"display:flex;margin-bottom:10px;justify-content:space-between;"},current_line))
+        return ui.div({"style":"display:block;"},all_lines)
 
 
 img_dir = Path(__file__).parent / "img_database"

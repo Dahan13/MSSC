@@ -1,4 +1,5 @@
 ## IMPORT ##
+import random
 ############
 
 def strategy_application(system, condition):
@@ -19,7 +20,7 @@ def strategy_application(system, condition):
     for t in available_turbines:
         if len(available_teams) > 0:
             if condition(system, t):
-                new_missions.append((t.get_id(), available_teams.pop().get_id()))
+                new_missions.append((t.get_id(), available_teams.pop(random.randint(0, len(available_teams)-1)).get_id()))
         else: # if there are no more available teams, we stop the loop
             break
     return new_missions

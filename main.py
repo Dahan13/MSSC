@@ -42,6 +42,7 @@ class System:
             planning: Planning = planning of all undergoing missions
             wind: int = wind speed
             days_count: int = number of days since the beginning of the simulation
+            wind_days_count: int = number of windy days since the beginning of the simulation
             total_prod: int = total energy produced since the beginning of the simulation
             total_cost: int = total cost since the beginning of the simulation
         """
@@ -134,6 +135,10 @@ class System:
     def get_days_count(self):
         """Returns the number of days since the beginning of the simulation."""
         return self.days_count
+    
+    def get_wind_days_count(self): 
+        """Returns the number of windy days since the beginning of the simulation."""
+        return self.wind_days_count
 
     def get_total_prod(self):
         """Returns the total energy produced since the beginning of the simulation."""
@@ -147,13 +152,13 @@ class System:
         l = [t.get_operating_days_count() for t in self.teams]
         s = 0
         for x in l :
-            s += x/self.wind_days_count if self.days_count != 0 else 0
+            s += x/self.wind_days_count if self.wind_days_count != 0 else 0
         return 100*s/len(self.teams) 
     
     def get_turbine_occupation_percentage(self) :
         l = [t.get_operating_days_count() for t in self.turbines]
         s = 0
         for x in l :
-            s += x/self.wind_days_count if self.days_count != 0 else 0
+            s += x/self.wind_days_count if self.wind_days_count != 0 else 0
         return 100*s/len(self.turbines)
     
