@@ -7,10 +7,7 @@ from shiny import App, reactive, render, ui
 from shiny.types import ImgData
 ############
 
-NUMBER_OF_TURBINES = 20
-NUMBER_OF_TEAMS = 5
-
-system = System(NUMBER_OF_TURBINES, NUMBER_OF_TEAMS)
+system = System(20, 5)
 
 color_dict = {1:"#37e171",2:"#a2ec5c",3:"#feab43",4:"#ff4444"}
 strategy = {"A":strategy_A,"B":strategy_B, "C": strategy_C, "D": strategy_D}
@@ -29,8 +26,6 @@ CSS_T_left = "display:flex;height:70px;width:70px;"
 CSS_T_right = "height:70px;width:50px;"
 CSS_T_text = "margin:auto;font-size:10px;" 
 
-WIDTH = 5
-
 app_ui = ui.page_fluid(
     ui.p({"style":"font-size:5vh;margin:0;"},"MSSC"),
     ui.layout_sidebar(
@@ -39,11 +34,15 @@ app_ui = ui.page_fluid(
             ui.div({"style":"border:solid 1px;border-radius:5px;padding-top:15px;"},
                 ui.div({"style":CSS_flex_center_center},
                     ui.p({"style":"width:100px;"},"TURBINES"),
-                    ui.div({"style":"width:75px;"},ui.input_numeric("nb_turbines",  label=None, value=NUMBER_OF_TURBINES,   min=1,max=100,step=1))
+                    ui.div({"style":"width:75px;"},ui.input_numeric("nb_turbines",  label=None,value=20,min=1,max=100,step=1))
                 ),
                 ui.div({"style":CSS_flex_center_center},
                     ui.p({"style":"width:100px;"},"TEAMS"),
-                    ui.div({"style":"width:75px;"},ui.input_numeric("nb_teams",     label=None, value=NUMBER_OF_TEAMS,      min=1,max=100,step=1))
+                    ui.div({"style":"width:75px;"},ui.input_numeric("nb_teams",     label=None,value=5,min=1,max=100,step=1))
+                ),
+                ui.div({"style":CSS_flex_center_center},
+                    ui.p({"style":"width:100px;"},"WIDTH"),
+                    ui.div({"style":"width:75px;"},ui.input_numeric("width",        label=None,value=5,min=1,max=100,step=1))
                 )
             ),
             ui.div({"style":CSS_flex_center_center},ui.input_action_button("next_day",   "NEXT DAY",     width="200px")),
@@ -112,7 +111,7 @@ def server(input, output, session) :
     
     @output
     @render.ui
-    @reactive.event(input.next_day, input.next_month, input.next_year, input.end_year, input.reset)
+    @reactive.event(input.next_day, input.next_month, input.next_year, input.end_year, input.reset, input.width)
     def ICON_statistics() :
         global system
         wind = system.get_wind()
@@ -162,16 +161,16 @@ def server(input, output, session) :
 
     @output
     @render.ui
-    @reactive.event(input.next_day, input.next_month, input.next_year, input.end_year, input.reset)
+    @reactive.event(input.next_day, input.next_month, input.next_year, input.end_year, input.reset, input.width)
     def ICON_turbines() :
         global system
         turbines = system.get_turbines()
-        necessary_lines = (len(turbines) - 1) // WIDTH + 1
+        necessary_lines = (len(turbines) - 1) // input.width() + 1
         all_lines = []
         for i in range(necessary_lines) :
             current_line = []
-            for j in range(WIDTH) :
-                index = i*WIDTH + j
+            for j in range(input.width()) :
+                index = i*input.width() + j
                 if index < len(turbines) :
                     if turbines[index].get_state() != 4 :   img = "turbine_on.png"
                     else :                                  img = "turbine_off.png"
@@ -201,17 +200,17 @@ def server(input, output, session) :
 
     @output
     @render.ui
-    @reactive.event(input.next_day, input.next_month, input.next_year, input.end_year, input.reset)
+    @reactive.event(input.next_day, input.next_month, input.next_year, input.end_year, input.reset, input.width)
     def ICON_teams() :
         global system
         teams = system.get_teams()
-        necessary_lines = (len(teams) - 1) // WIDTH + 1
+        necessary_lines = (len(teams) - 1) // input.width() + 1
         planning = system.get_planning()
         all_lines = []
         for i in range(necessary_lines) :
             current_line = []
-            for j in range(WIDTH) :
-                index = i*WIDTH + j
+            for j in range(input.width()) :
+                index = i*input.width() + j
                 if index < len(teams) :
                     if teams[index].get_availability() : img, display_info = "team_on.png", ""
                     else : 
